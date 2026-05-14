@@ -1,0 +1,167 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import products from '../../data/products.json';
+
+const categories = [...new Set(products.map(p => p.category))];
+---
+
+<Layout title="All Products" description="Browse all earphones, earbuds and headphones reviewed by BestBuds India.">
+
+  <section class="page-header">
+    <div class="container">
+      <h1>All Products</h1>
+      <p>Honest specs and reviews for every product we've tested.</p>
+    </div>
+  </section>
+
+  <section class="products-section">
+    <div class="container">
+
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        {categories.map(cat => (
+          <button class="filter-btn" data-filter={cat}>{cat}</button>
+        ))}
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        {products.map(product => (
+          <a href={`/products/${product.id}`} class="product-card" data-category={product.category}>
+            <div class="card-image">
+              <img src="/images/placeholder.svg" alt={product.name} />
+            </div>
+            <div class="card-body">
+              <span class="category">{product.category}</span>
+              <h3>{product.name}</h3>
+              <div class="card-meta">
+                <span class="price">₹{product.price.toLocaleString('en-IN')}</span>
+                <span class="rating">&#9733; {product.rating}</span>
+              </div>
+              <p class="verdict">{product.verdict.slice(0, 80)}...</p>
+              <span class="view-btn">View Details →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .page-header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .page-header p { color: var(--text-muted); }
+
+  .products-section { padding: 2.5rem 0; }
+
+  .filters {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+
+  .filter-btn {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .product-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--bg);
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(108,71,255,0.1);
+  }
+
+  .product-card.hidden { display: none; }
+
+  .card-image {
+    height: 180px;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-image img { max-height: 140px; max-width: 80%; object-fit: contain; }
+
+  .card-body { padding: 1.25rem; }
+
+  .category {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-body h3 { font-size: 1rem; font-weight: 600; margin: 0.25rem 0 0.5rem; }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .price { font-size: 1.05rem; font-weight: 700; color: var(--accent); }
+  .rating { font-size: 0.85rem; color: #f59e0b; font-weight: 500; }
+  .verdict { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1rem; }
+
+  .view-btn {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  const btns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.product-card');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+</script>

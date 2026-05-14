@@ -1,0 +1,363 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import products from '../../data/products.json';
+---
+
+<Layout title="Compare Products" description="Compare earphones and headphones side by side with scores.">
+  <section class="page-header">
+    <div class="container">
+      <h1>Compare Products</h1>
+      <p>Pick any two products to compare specs and get a winner.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    <div class="picker-row">
+      <div class="picker">
+        <label>Product 1</label>
+        <select id="product1">
+          <option value="">-- Select a product --</option>
+          {products.map(p => (
+            <option value={p.id}>{p.name} — ₹{p.price.toLocaleString('en-IN')}</option>
+          ))}
+        </select>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="picker">
+        <label>Product 2</label>
+        <select id="product2">
+          <option value="">-- Select a product --</option>
+          {products.map(p => (
+            <option value={p.id}>{p.name} — ₹{p.price.toLocaleString('en-IN')}</option>
+          ))}
+        </select>
+      </div>
+    </div>
+
+    <p id="selectPrompt" class="select-prompt">
+      Select two products above to see a detailed comparison.
+    </p>
+
+    <div id="compareResult" style="display:none">
+
+      <div class="score-banner" id="scoreBanner"></div>
+
+      <div class="compare-grid" id="compareGrid"></div>
+
+      <div class="verdict-section" id="verdictSection"></div>
+
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  .page-header { padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); }
+  .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .page-header p { color: var(--text-muted); }
+
+  .picker-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    flex-wrap: wrap;
+  }
+
+  .picker { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 0.5rem; }
+  .picker label { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .picker select {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    cursor: pointer;
+  }
+
+  .vs-badge {
+    font-size: 1rem;
+    font-weight: 800;
+    color: white;
+    background: var(--accent);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-bottom: 2px;
+  }
+
+  .select-prompt {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 4rem 0;
+    font-size: 1rem;
+  }
+
+  .score-banner {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 1rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .score-block { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; }
+  .score-name { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+  .score-number { font-size: 3rem; font-weight: 800; line-height: 1; }
+  .score-label { font-size: 0.75rem; color: var(--text-muted); }
+  .score-winner { color: #16a34a; }
+  .score-loser { color: #9ca3af; }
+  .score-divider { font-size: 1.2rem; font-weight: 700; color: var(--text-muted); text-align: center; }
+
+  .winner-badge {
+    display: inline-block;
+    background: #dcfce7;
+    color: #15803d;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+  }
+
+  .compare-grid {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+
+  .compare-header-row {
+    display: grid;
+    grid-template-columns: 1fr 160px 1fr;
+    background: #6C47FF;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+
+  .compare-header-row .h-name {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .compare-header-row .h-label {
+    padding: 1rem 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.85;
+    text-align: center;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255,255,255,0.2);
+  }
+
+  .compare-row {
+    display: grid;
+    grid-template-columns: 1fr 160px 1fr;
+    border-bottom: 1px solid #e5e7eb;
+    width: 100%;
+  }
+
+  .compare-row:last-child { border-bottom: none; }
+
+  .compare-row .val {
+    padding: 0.8rem 1rem;
+    background: #ffffff;
+    text-align: center;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .compare-row .key {
+    padding: 0.8rem 0.75rem;
+    background: #f9fafb;
+    font-weight: 600;
+    font-size: 0.78rem;
+    color: #6b7280;
+    text-transform: capitalize;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    min-height: 44px;
+  }
+
+  .compare-row .val.win {
+    background: #f0fdf4;
+    color: #15803d;
+    font-weight: 700;
+  }
+
+  .compare-row .val.lose {
+    background: #ffffff;
+    color: #9ca3af;
+  }
+
+  .verdict-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .verdict-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+  }
+
+  .verdict-card.winner-card {
+    border-color: #16a34a;
+    background: #f0fdf4;
+  }
+
+  .verdict-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .verdict-card p { font-size: 0.85rem; color: #6b7280; line-height: 1.6; }
+
+  .buy-link {
+    display: inline-block;
+    margin-top: 0.75rem;
+    background: #ff9900;
+    color: white;
+    padding: 0.5rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  @media (max-width: 640px) {
+    .compare-header-row { grid-template-columns: 1fr 80px 1fr; }
+    .compare-row { grid-template-columns: 1fr 80px 1fr; }
+    .verdict-section { grid-template-columns: 1fr; }
+    .score-number { font-size: 2rem; }
+  }
+</style>
+
+<script define:vars={{ products }}>
+function score(p) {
+  let s = 0;
+  s += (p.rating / 5) * 30;
+  if (p.specs.noiseCancellation !== 'No') s += 15;
+  if (p.specs.waterResistance !== 'No') s += 10;
+  if (p.specs.mic === 'Yes') s += 5;
+  const bat = parseInt(p.specs.battery);
+  if (!isNaN(bat)) s += Math.min((bat / 50) * 20, 20);
+  const maxPrice = 30000;
+  s += Math.max(0, (1 - p.price / maxPrice) * 20);
+  return Math.round(s);
+}
+
+function betterVal(key, v1, v2) {
+  const higherBetter = ['battery', 'driver'];
+  const lowerBetter = ['chargingTime', 'weight'];
+  const n1 = parseFloat(v1);
+  const n2 = parseFloat(v2);
+  if (isNaN(n1) || isNaN(n2)) return null;
+  if (higherBetter.some(k => key.toLowerCase().includes(k))) {
+    if (n1 > n2) return 1;
+    if (n2 > n1) return 2;
+  }
+  if (lowerBetter.some(k => key.toLowerCase().includes(k))) {
+    if (n1 < n2) return 1;
+    if (n2 < n1) return 2;
+  }
+  return null;
+}
+
+function buildComparison(p1, p2) {
+  const result = document.getElementById('compareResult');
+  const prompt = document.getElementById('selectPrompt');
+  if (!p1 || !p2) { result.style.display = 'none'; prompt.style.display = 'block'; return; }
+
+  result.style.display = 'block';
+  prompt.style.display = 'none';
+
+  const s1 = score(p1);
+  const s2 = score(p2);
+
+  document.getElementById('scoreBanner').innerHTML = `
+    <div class="score-block">
+      <span class="score-name">${p1.name}</span>
+      <span class="score-number ${s1 >= s2 ? 'score-winner' : 'score-loser'}">${s1}</span>
+      <span class="score-label">/ 100</span>
+      ${s1 >= s2 ? '<span class="winner-badge">Winner</span>' : ''}
+    </div>
+    <div class="score-divider">vs</div>
+    <div class="score-block">
+      <span class="score-name">${p2.name}</span>
+      <span class="score-number ${s2 > s1 ? 'score-winner' : 'score-loser'}">${s2}</span>
+      <span class="score-label">/ 100</span>
+      ${s2 > s1 ? '<span class="winner-badge">Winner</span>' : ''}
+    </div>
+  `;
+
+  const specKeys = Object.keys(p1.specs);
+  const allRows = [
+    { key: 'Price', v1: `₹${p1.price.toLocaleString('en-IN')}`, v2: `₹${p2.price.toLocaleString('en-IN')}`, better: p1.price <= p2.price ? 1 : 2 },
+    { key: 'Rating', v1: `${p1.rating} ★`, v2: `${p2.rating} ★`, better: p1.rating >= p2.rating ? 1 : 2 },
+    ...specKeys.map(k => {
+      const v1 = p1.specs[k]; const v2 = p2.specs[k];
+      return { key: k.replace(/([A-Z])/g, ' $1').trim(), v1, v2, better: betterVal(k, v1, v2) };
+    })
+  ];
+
+  const headerRow = `
+    <div class="compare-header-row">
+      <div class="h-name">${p1.name}</div>
+      <div class="h-label">Spec</div>
+      <div class="h-name">${p2.name}</div>
+    </div>
+  `;
+
+  const rows = allRows.map(r => `
+    <div class="compare-row">
+      <div class="val ${r.better === 1 ? 'win' : r.better === 2 ? 'lose' : ''}">${r.v1}</div>
+      <div class="key">${r.key}</div>
+      <div class="val ${r.better === 2 ? 'win' : r.better === 1 ? 'lose' : ''}">${r.v2}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('compareGrid').innerHTML = headerRow + rows;
+
+  document.getElementById('verdictSection').innerHTML = `
+    <div class="verdict-card ${s1 >= s2 ? 'winner-card' : ''}">
+      <h3>${s1 >= s2 ? '🏆 ' : ''}${p1.name}</h3>
+      <p>${p1.verdict}</p>
+      <a href="${p1.affiliateLink}" target="_blank" rel="nofollow noopener" class="buy-link">Buy on Amazon ↗</a>
+    </div>
+    <div class="verdict-card ${s2 > s1 ? 'winner-card' : ''}">
+      <h3>${s2 > s1 ? '🏆 ' : ''}${p2.name}</h3>
+      <p>${p2.verdict}</p>
+      <a href="${p2.affiliateLink}" target="_blank" rel="nofollow noopener" class="buy-link">Buy on Amazon ↗</a>
+    </div>
+  `;
+}
+
+const sel1 = document.getElementById('product1');
+const sel2 = document.getElementById('product2');
+
+function getProduct(id) { return products.find(p => p.id === id); }
+
+sel1.addEventListener('change', () => buildComparison(getProduct(sel1.value), getProduct(sel2.value)));
+sel2.addEventListener('change', () => buildComparison(getProduct(sel1.value), getProduct(sel2.value)));
+</script>

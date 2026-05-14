@@ -1,0 +1,198 @@
+---
+import Layout from '../layouts/Layout.astro';
+import products from '../data/products.json';
+
+const featured = products.slice(0, 3);
+---
+
+<Layout title="Best Earphones & Headphones in India" description="Compare earphones, TWS earbuds and headphones. Find the best audio gear for your budget in India.">
+
+  <section class="hero">
+    <div class="container">
+      <h1>Find Your Perfect Sound</h1>
+      <p>Compare earphones, earbuds & headphones. Honest reviews for Indian buyers.</p>
+      <div class="hero-actions">
+        <a href="/products" class="btn-primary">Browse All Products</a>
+        <a href="/compare" class="btn-secondary">Compare Products</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured">
+    <div class="container">
+      <h2>Featured Products</h2>
+      <div class="product-grid">
+        {featured.map(product => (
+          <a href={`/products/${product.id}`} class="product-card">
+            <div class="card-image">
+              <img src="/images/placeholder.svg" alt={product.name} />
+            </div>
+            <div class="card-body">
+              <span class="category">{product.category}</span>
+              <h3>{product.name}</h3>
+              <div class="card-meta">
+                <span class="price">₹{product.price.toLocaleString('en-IN')}</span>
+                <span class="rating">&#9733; {product.rating}</span>
+              </div>
+              <p class="verdict">{product.verdict.slice(0, 80)}...</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="categories">
+    <div class="container">
+      <h2>Shop by Category</h2>
+      <div class="cat-grid">
+        <a href="/products" class="cat-card">
+          <span class="cat-icon">&#127911;</span>
+          <span>TWS Earbuds</span>
+        </a>
+        <a href="/products" class="cat-card">
+          <span class="cat-icon">&#127908;</span>
+          <span>Wired Earphones</span>
+        </a>
+        <a href="/products" class="cat-card">
+          <span class="cat-icon">&#127925;</span>
+          <span>Over-ear Headphones</span>
+        </a>
+        <a href="/best" class="cat-card">
+          <span class="cat-icon">&#127942;</span>
+          <span>Best Lists</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style>
+  .hero {
+    padding: 5rem 0;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #6C47FF08, #6C47FF18);
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: opacity 0.2s;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+
+  .btn-secondary {
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    padding: 0.75rem 1.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+  }
+
+  .btn-secondary:hover { background: var(--accent-light); }
+
+  .featured, .categories { padding: 4rem 0; }
+
+  h2 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .product-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--bg);
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(108,71,255,0.1);
+  }
+
+  .card-image {
+    height: 180px;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-image img { max-height: 140px; max-width: 80%; object-fit: contain; }
+
+  .card-body { padding: 1.25rem; }
+
+  .category {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-body h3 { font-size: 1rem; font-weight: 600; margin: 0.25rem 0 0.5rem; }
+
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+  }
+
+  .price { font-size: 1.1rem; font-weight: 700; color: var(--accent); }
+  .rating { font-size: 0.85rem; color: #f59e0b; font-weight: 500; }
+  .verdict { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .cat-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .cat-card:hover { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+  .cat-icon { font-size: 2rem; }
+</style>

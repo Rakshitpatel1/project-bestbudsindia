@@ -1,0 +1,85 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import products from '../../data/products.json';
+
+const lists = [
+  { title: "Best earphones under ₹1,500", filter: p => p.price <= 1500 },
+  { title: "Best for calls", filter: p => p.tags.includes('calls') || p.specs.mic === 'Yes' },
+  { title: "Best with ANC", filter: p => p.specs.noiseCancellation !== 'No' },
+];
+---
+
+<Layout title="Best Lists" description="Curated lists of the best earphones and headphones for every budget and use case in India.">
+
+  <section class="page-header">
+    <div class="container">
+      <h1>Best Lists</h1>
+      <p>Curated picks for every budget and use case.</p>
+    </div>
+  </section>
+
+  <div class="container">
+    {lists.map(list => {
+      const picks = products.filter(list.filter);
+      if (picks.length === 0) return null;
+      return (
+        <div class="list-section">
+          <h2>{list.title}</h2>
+          <div class="list-grid">
+            {picks.map((product, i) => (
+              <a href={`/products/${product.id}`} class="list-card">
+                <span class="rank">#{i + 1}</span>
+                <img src="/images/placeholder.svg" alt={product.name} />
+                <div class="list-info">
+                  <h3>{product.name}</h3>
+                  <span class="price">₹{product.price.toLocaleString('en-IN')}</span>
+                  <p>{product.verdict.slice(0, 70)}...</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+
+</Layout>
+
+<style>
+  .page-header { padding: 3rem 0 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+  .page-header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .page-header p { color: var(--text-muted); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+  .list-section { margin-bottom: 3rem; }
+  .list-section h2 { font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); display: inline-block; }
+
+  .list-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .list-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    transition: border-color 0.2s, transform 0.2s;
+    background: var(--bg);
+  }
+
+  .list-card:hover { border-color: var(--accent); transform: translateX(4px); }
+
+  .rank {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 40px;
+  }
+
+  .list-card img { width: 64px; height: 64px; object-fit: contain; flex-shrink: 0; }
+
+  .list-info { flex: 1; }
+  .list-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .list-info p { font-size: 0.83rem; color: var(--text-muted); line-height: 1.5; margin-top: 0.25rem; }
+  .price { font-size: 0.95rem; font-weight: 700; color: var(--accent); }
+</style>
